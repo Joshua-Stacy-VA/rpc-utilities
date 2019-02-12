@@ -1,5 +1,5 @@
 {
-  "name": "rpc-utilities",
+  "name": "@vistadataproject/rpc-utilities",
   "version": "0.0.1",
   "description": "Utilities to handle manipulation and normalization of VISTA RPC data",
   "main": "src/index.js",
@@ -10,7 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/vistadataproject/rpc-utilities.git"
   },
-  "author": "HRG Tech",
+  "author": "HRG Tech, LLC",
   "license": "AGPL-3.0",
   "bugs": {
     "url": "https://github.com/vistadataproject/rpc-utilities/issues"
