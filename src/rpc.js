@@ -9,9 +9,17 @@ const READABLE_DATA_FIELDS = ['name', 'args', 'raw', 'response', 'encrypted', 'c
 
 
 /**
- * The **RPC** class represents the data associated with a single RPC.
+ * The **RPC** class represents the normalized data associated with a single RPC.
  */
 class RPC {
+    /**
+     * @constructs RPC
+     * @param data - The initial RPC data that this
+     * @param {Object} [options={}] - The object options
+     * @param {Boolean} [options.encrypted=false] - Whether or not the raw RPC data is encrypted
+     * @param {String} [options.cipher='VA'] - The encryption cipher to use. This value is only considered when
+     * the `encrypted` option is `true`.
+     */
     constructor(data, options = {}) {
         const { encrypted = false, cipher = 'VA' } = options;
 
@@ -38,6 +46,12 @@ class RPC {
         });
     }
 
+    /**
+     * Get or set the encryption option of the object.
+     * @param  {Boolean} value - If this is a boolean value, the encryption flag is set to the value passed
+     * in. If it's not, then this function acts like a getter.
+     * @return {Boolean} The value of the `encrypted` option.
+     */
     encrypted(value) {
         if (typeof value === 'boolean') {
             this.data.encrypted = value;
@@ -52,6 +66,12 @@ class RPC {
         return this.data.encrypted;
     }
 
+    /**
+     * Get or set the encryption cipher option of the object.
+     * @param  {String} value - If this is a string value, the encryption cipher is set to the value passed
+     * in. If it's not, then this function acts like a getter.
+     * @return {Boolean} The value of the `cipher` option.
+     */
     cipher(value) {
         if (typeof value === 'string') {
             this.data.cipher = value;
@@ -61,7 +81,7 @@ class RPC {
 
     /**
      * Add multiple data fields, via JS object, to the managed data.
-     * @param  {Object} data JS object containing the objects to set.
+     * @param  {Object} data - JS object containing the objects to set.
      */
     extend(data) {
         Object.assign(this.data, data);
@@ -73,7 +93,7 @@ class RPC {
      * * Raw RPC request (`String`): a raw RPC string
      * * RPC Object (`Object`): an RPC object with `name` and `args` fields. `name` should be the string name of the
      * RPC represented by the object, and `args` should be an array of arguments associated with the RPC call.
-     * @param {String|Object} data The data to set the `request` data with.
+     * @param {String|Object} data - The data to set the `request` data with.
      */
     request(data, options = {}) {
         const { throwOnError = false } = options;
@@ -129,7 +149,7 @@ class RPC {
 
     /**
      * Return the data maintained by the **RPC** instance as a JS object.
-     * @return {Object} A cloned copy of the data managed by the object.
+     * @return {Object} A cloned JS object copy of the data managed by the object.
      */
     toJSON() {
         return this.data;
@@ -137,7 +157,7 @@ class RPC {
 
     /**
      * Set the RPC `response` data from an emulation response. This is typically either an array or a value.
-     * @param {String|Number|Array} value Response values to set as the **RPC** `result`.
+     * @param {String|Number|Array} value - Response values to set as the **RPC** `result`.
      */
     responseFromValue(value) {
         this.extend({
@@ -150,7 +170,7 @@ class RPC {
 
     /**
      * Set the RPC `response` data from a raw RPC response string.
-     * @param {String} value Raw RPC string to set as the **RPC** `result`.
+     * @param {String} value - Raw RPC string to set as the **RPC** `result`.
      */
     responseFromRaw(raw) {
         this.extend({

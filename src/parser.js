@@ -3,6 +3,17 @@
 const { trimStart, trimEnd } = require('lodash/string');
 const rpcUtils = require('./utils');
 
+/**
+ * @module Parser
+ */
+
+/**
+ * @typedef {Object} RPCObject
+ * @property {String} name - The name of the RPC
+ * @property {Array} args - The list of RPC argument values
+ * @property {String} version - The attached version of the RPC protocol used
+ */
+
 const parameterTypeReverseMap = {
     0: 'LITERAL',
     1: 'REFERENCE',
@@ -10,6 +21,12 @@ const parameterTypeReverseMap = {
     3: 'GLOBAL',
 };
 
+/**
+ * Parse the parameters section of a raw RPC string and create an array of argument values.
+ * @param  {String} paramRpcString - The parameter section of a raw RPC string
+ * @return {Array} List of parameters, or null if the string was invalid
+ * @todo **CRITICAL** Add handling of `REFERENCE` (type 1) parameters. Right now they're handled the same as literals.
+ */
 const parseParameters = (paramRpcString) => {
     if (!paramRpcString || paramRpcString.indexOf('5') !== 0) {
         return null;
@@ -78,17 +95,17 @@ const parseParameters = (paramRpcString) => {
 };
 
 /**
- * @param rpcObjectInputParameters The rpcObject.inputParameters array.
- * @returns the input parameters as array of the "parameter" values or arrays without the types and ordinals.
+ * Convert a list of input argument values into an `args` array.
  *
- * Main change is to "List Parameters". In general ...
+ * Main change is to "List Parameters". In general:
+ *     `[{"key":"1", "value":"ABC"}, {"key":"2", "value":"DEF"}, {"key":"3", "value":"GHI"}]`
  *
- *      [{"key":"1", "value":"ABC"}, {"key":"2", "value":"DEF"}, {"key":"3", "value":"GHI"}]
+ * becomes:
+ *     `{"1": "ABC", "2": "DEF", "3": "GHI"}`
  *
- *  becomes:
- *
- *      {"1": "ABC", "2": "DEF", "3": "GHI"} as the args object.
- *
+ * as the args object.
+ * @param {Array} rpcObjectInputParameters - The rpcObject.inputParameters array.
+ * @returns {Array} the input parameters as array of the "parameter" values or arrays without the types and ordinals.
  */
 const inputParametersToArgs = (rpcObjectInputParameters) => {
     const args = [];
@@ -175,6 +192,11 @@ const inputParametersToArgs = (rpcObjectInputParameters) => {
     return args;
 };
 
+/**
+ * Parse a raw RPC protocol string. This is the most commonly used function of the module.
+ * @param  {String} rpcString - The raw RPC protocol string to parse.
+ * @return {RPCObject} The JS object representation of the RPC, or null if the string was invalid.
+ */
 const parseRawRPC = (rpcString) => {
     const rpcObject = {};
 
@@ -247,6 +269,11 @@ const parseRawRPC = (rpcString) => {
     return rpcObject;
 };
 
+/**
+ * Parse raw results into key values.
+ * @param  {String} [response=''] - The raw RPC response string
+ * @return {Array} Array of results values
+ */
 const parseRawResults = (response = '') => {
     const value = trimStart(trimEnd(response.toString(), rpcUtils.EOT), rpcUtils.NUL);
     if (!value.includes('\r\n')) {
@@ -256,6 +283,11 @@ const parseRawResults = (response = '') => {
     return trimEnd(value, '\r\n').split('\r\n');
 };
 
+/**
+ * Check if a string is a valid, raw RPC protocol formatted string.
+ * @param  {string} rpcString - The string to check
+ * @return {Boolean} True if the string was valid, false if not
+ */
 const isValidRawRPC = (rpcString) => {
     const rpcObject = parseRawRPC(rpcString);
     return !!(rpcObject && rpcObject.name && rpcObject.name !== '#REJECT#');

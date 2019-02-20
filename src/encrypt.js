@@ -3,6 +3,10 @@
 const { isString } = require('lodash/lang');
 const { random } = require('lodash/number');
 
+/**
+ * @module Encryption
+ */
+
 /*
  * Change by VDP 5/2016 - need to support both the VA and OSEHRA Cyphers. OSEHRA VISTA uses a
  * different Cipher.
@@ -60,6 +64,16 @@ const CIPHER_PADS = {
 
 const DEFAULT_CIPHER = CIPHER_PADS.VA;
 
+/**
+ * Encrypt a string using the RPC protocol cipher-based encryption method.
+ * @param  {String} str - The string to encrypt
+ * @param  {String} [cipherName='VA'] The name of the encryption cipher to use. The encryption utility
+ * currently comes with two named ciphers: `VA` (the default) and `OSEHRA`. You can use your own custom
+ * encryption cipher as well. Just `include` the `CIPHER_PADS` object from this module, which is just a
+ * JS object, then insert the cipher (array of 20 strings) into the object, where the key of the cipher
+ * in the object is the name you'd use here.
+ * @return {String} The encrypted string, or an empty string if an invalid string was passed in.
+ */
 const encrypt = (str, cipherName = 'VA') => {
     if (!isString(str) || str.length <= 0) {
         return '';
@@ -85,6 +99,16 @@ const encrypt = (str, cipherName = 'VA') => {
     return `${startChar}${encodedStr}${endChar}`;
 };
 
+/**
+ * Decrypt a string that was encrypted using the RPC protocol cipher-based encryption method.
+ * @param  {String} str - The encrypted string to decrypt
+ * @param  {String} [cipherName='VA'] The name of the encryption cipher to use. The encryption utility
+ * currently comes with two named ciphers: `VA` (the default) and `OSEHRA`. You can use your own custom
+ * encryption cipher as well. Just `include` the `CIPHER_PADS` object from this module, which is just a
+ * JS object, then insert the cipher (array of 20 strings) into the object, where the key of the cipher
+ * in the object is the name you'd use here.
+ * @return {String} The descrypted string, or an empty string if an invalid string was passed in.
+ */
 const decrypt = (str, cipherName = 'VA') => {
     if (!isString(str) || str.length < 3) {
         return '';

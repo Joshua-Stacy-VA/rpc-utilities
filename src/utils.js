@@ -3,6 +3,11 @@
 const { isString, isNumber } = require('lodash/lang');
 const { trimStart } = require('lodash/string');
 
+/**
+ * @module Utils
+ * @ignore
+ */
+
 const NUL = '\u0000';
 const SOH = '\u0001';
 const EOT = '\u0004';
