@@ -25,7 +25,6 @@ const parameterTypeReverseMap = {
  * Parse the parameters section of a raw RPC string and create an array of argument values.
  * @param  {String} paramRpcString - The parameter section of a raw RPC string
  * @return {Array} List of parameters, or null if the string was invalid
- * @todo **CRITICAL** Add handling of `REFERENCE` (type 1) parameters. Right now they're handled the same as literals.
  */
 const parseParameters = (paramRpcString) => {
     if (!paramRpcString || paramRpcString.indexOf('5') !== 0) {
@@ -194,6 +193,12 @@ const inputParametersToArgs = (rpcObjectInputParameters) => {
 
 /**
  * Parse a raw RPC protocol string. This is the most commonly used function of the module.
+ *
+ * Note: The RPCObject args Array values can be one of 3 types: LITERAL, REFERENCE, LIST
+ *    * LITERAL: Any value
+ *    * REFERENCE: Will be an object with `type` field set to `REFERENCE` and `value` field set to the value of the arg
+ *    * LIST: A JS Object representing the parameters in the list, could be multi-levels
+ *
  * @param  {String} rpcString - The raw RPC protocol string to parse.
  * @return {RPCObject} The JS object representation of the RPC, or null if the string was invalid.
  */
