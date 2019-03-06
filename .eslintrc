@@ -3,7 +3,8 @@
     "env": {
         "node": true,
         "jasmine": true,
-        "es6": true
+        "es6": true,
+        "jest": true,
     },
     "rules": {
         "indent": ["error", 4, {

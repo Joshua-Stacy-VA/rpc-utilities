@@ -4,7 +4,7 @@
   "description": "Utilities to handle manipulation and normalization of VISTA RPC data",
   "main": "src/index.js",
   "scripts": {
-    "test": "gulp test"
+    "test": "jest --coverage"
   },
   "repository": {
     "type": "git",
@@ -27,7 +27,7 @@
     "eslint-plugin-import": "^2.16.0",
     "express": "^4.16.4",
     "gulp": "^4.0.0",
-    "jasmine": "^3.3.1",
+    "jest": "^24.1.0",
     "jsdoc": "^3.5.5",
     "jsdoc-to-markdown": "^4.0.1"
   }
