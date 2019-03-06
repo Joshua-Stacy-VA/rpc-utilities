@@ -90,7 +90,7 @@ const unLPack = (lPack, digits) => {
 
     if (digits && isNumber(digits)) { // this case makes it easier
         const length = +removeLeftPad(lPack.substring(0, digits)); // this should be the length of the payload
-        string = lPack.subString(digits);
+        string = lPack.substring(digits);
         width = (string.length === length) ? digits : 0;
     } else { // this is a little harder
         const packedLength = lPack.length;
