@@ -1,6 +1,6 @@
 'use strict';
 
-const { isNil, isPlainObject } = require('lodash/lang');
+const { isNil, isPlainObject, isString } = require('lodash/lang');
 const { format } = require('util');
 const rpcUtils = require('./utils');
 
@@ -41,7 +41,7 @@ const makeKeyValueListFromObject = (objectValue) => {
             value: value.length,
         });
 
-        return map;
+        return map.concat(results);
     }, []);
 
     return list;
@@ -177,6 +177,10 @@ const encapsulate = str => `${rpcUtils.NUL}${rpcUtils.NUL}${str}${rpcUtils.EOT}`
  * stripMarkers('\u0000\u0000HELLO WORLD\u0004'); // returns 'HELLO WORLD'
  */
 const stripMarkers = (str) => {
+    if (!isString(str)) {
+        return str;
+    }
+
     if (str.indexOf(rpcUtils.NUL + rpcUtils.NUL) === 0 && str.indexOf(rpcUtils.EOT) === str.length - 1) {
         return str.substring(2, str.length - 1);
     }

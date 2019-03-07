@@ -1,6 +1,7 @@
 'use strict';
 
 const { trimStart, trimEnd } = require('lodash/string');
+const { isString } = require('lodash/lang');
 const rpcUtils = require('./utils');
 
 /**
@@ -205,7 +206,7 @@ const inputParametersToArgs = (rpcObjectInputParameters) => {
 const parseRawRPC = (rpcString) => {
     const rpcObject = {};
 
-    if (!rpcString) {
+    if (!isString(rpcString)) {
         return null;
     }
 
@@ -301,6 +302,7 @@ const isValidRawRPC = (rpcString) => {
 module.exports = {
     parseRawRPC,
     parseRawResults,
+    parseParameters,
     inputParametersToArgs,
     isValidRawRPC,
 };

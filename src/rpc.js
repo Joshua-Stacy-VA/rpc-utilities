@@ -135,7 +135,7 @@ class RPC {
 
     _requestFromRaw(data) {
         const raw = data.toString();
-        const { name, args = [] } = parser.parseRawRPC(raw);
+        const { name = null, args = [] } = parser.parseRawRPC(raw) || {};
 
         if (isNil(name)) {
             return new Error(`Invalid request data: ${data}`);
