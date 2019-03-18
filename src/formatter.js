@@ -149,14 +149,26 @@ const buildParamRpcString = (paramStringList) => {
  * @param  {Array} paramStringList - List of arguments
  * @return {String} The raw RPC-protocol formatted string
  */
-const buildRpcString = (rpcName, paramStringList) => (
-    format('%s11302%s%s%s%s',
+const buildRpcString = (rpcName, paramStringList) => {
+    if (isNil(rpcName)) {
+        return '';
+    }
+
+    const name = rpcName.toString();
+    if (name === 'TCPConnect') {
+        const [ipAddress = '127.0.0.1', , hostname = 'localhost'] = paramStringList;
+        return buildRpcGreetingString(ipAddress, hostname);
+    }
+    if (name === '#BYE#') {
+        return buildRpcSignOffString();
+    }
+    return format('%s11302%s%s%s%s',
         rpcUtils.PREFIX,
         prependCount(rpcUtils.RPC_VERSION),
         prependCount(rpcName),
         buildParamRpcString(paramStringList),
-        rpcUtils.EOT)
-);
+        rpcUtils.EOT);
+};
 
 /**
  * Utility method to encapsulate a string with special marker characters. These marker characters are required

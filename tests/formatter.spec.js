@@ -22,6 +22,10 @@ test('buildRpcString', () => {
         name: 'VALUE',
         list: [1, 2, 3],
     }])).toBe('[XWB]11302\u00051.108\u0007ORWU DT52004name005VALUEt006list,00013t006list,10011t006list,20012t006list,30013f\u0004');
+    expect(buildRpcString('TCPConnect', ['test', 0, 'another'])).toBe('[XWB]10304\nTCPConnect50004testf00010f0007anotherf\u0004');
+    expect(buildRpcString('TCPConnect', [])).toBe('[XWB]10304\nTCPConnect50009127.0.0.1f00010f0009localhostf\u0004');
+    expect(buildRpcString('#BYE#', [])).toBe('[XWB]10304\u0005#BYE#\u0004');
+    expect(buildRpcString(null)).toBe('');
 });
 
 test('buildLiteralParamString', () => {
