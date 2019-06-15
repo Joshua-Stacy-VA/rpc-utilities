@@ -134,9 +134,15 @@ const buildParamRpcString = (paramStringList) => {
         return '54f';
     }
 
-    const paramStringParts = paramStringList.map(arg => (
-        isPlainObject(arg) ? buildListParamString(makeKeyValueListFromObject(arg)) : buildLiteralParamString(arg)
-    ));
+    const paramStringParts = paramStringList.map((arg) => {
+        if (!isPlainObject(arg)) {
+            return buildLiteralParamString(arg);
+        }
+        if (arg.type === 'REFERENCE') {
+            return buildReferenceParamString(arg.value);
+        }
+        return buildListParamString(makeKeyValueListFromObject(arg));
+    });
     paramStringParts.unshift('5');
 
     return paramStringParts.join('');
