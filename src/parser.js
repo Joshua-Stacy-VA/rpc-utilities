@@ -47,7 +47,7 @@ const parseParameters = (paramRpcString) => {
         const paramtype = remainderString.substring(0, 1);
         const paramtypeName = parameterTypeReverseMap[paramtype];
 
-        if (paramtype === '0' || paramtype === '1' || paramtype === '3') {
+        if (paramtype === '0' || paramtype === '1') {
             // LITERAL and REFERENCE type params are treated the same way
             const poppedObject = rpcUtils.popLPack(remainderString.substring(1));
             remainderString = poppedObject.remainder;
@@ -57,7 +57,7 @@ const parseParameters = (paramRpcString) => {
             }
             parameterNum += 1;
             parameters.push({ parameterType: paramtypeName, parameter: poppedObject.string, num: parameterNum });
-        } else if (paramtype === '2') {
+        } else if (paramtype === '2' || paramtype === '3') {
             // LIST type parameters need to remove LPacks two at a time for key/value pairs.
             // remove the paramtype
             remainderString = remainderString.substring(1);
