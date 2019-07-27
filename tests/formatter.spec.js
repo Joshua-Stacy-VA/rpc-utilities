@@ -28,6 +28,24 @@ test('buildRpcString', () => {
     expect(buildRpcString(null)).toBe('');
 });
 
+test('buildRpcString with object parameter', () => {
+    expect(buildRpcString('TIU TEMPLATE GETTEXT', [
+        '47329',
+        '223;3180815.123;A',
+        {
+            1: {
+                0: '^@@^AGMC MEDS (ACTIVE)',
+            },
+            2: {
+                0: '|AGMC MEDS (ACTIVE)|',
+            },
+            3: {
+                0: '^@@^',
+            },
+        },
+    ])).toBe('[XWB]11302\u00051.108\u0014TIU TEMPLATE GETTEXT5000547329f0017223;3180815.123;Af20031,0022^@@^AGMC MEDS (ACTIVE)t0032,0020|AGMC MEDS (ACTIVE)|t0033,0004^@@^f\u0004');
+});
+
 test('buildLiteralParamString', () => {
     expect(buildLiteralParamString('ABCDE12345')).toBe('0010ABCDE12345f');
 });

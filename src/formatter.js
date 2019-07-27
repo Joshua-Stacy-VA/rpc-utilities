@@ -26,22 +26,35 @@ const strPack = (val, width = rpcUtils.COUNT_WIDTH) => {
 const makeKeyValueListFromObject = (objectValue) => {
     const list = Object.keys(objectValue).reduce((map, key) => {
         const value = objectValue[key];
-        if (!Array.isArray(value)) {
-            map.push({ key, value });
-            return map;
+
+        // Array parameter
+        if (Array.isArray(value)) {
+            const results = value.map((val, index) => ({
+                key: `${key},${index + 1}`,
+                value: val,
+            }));
+
+            results.unshift({
+                key: `${key},0`,
+                value: value.length,
+            });
+
+            return map.concat(results);
         }
 
-        const results = value.map((val, index) => ({
-            key: `${key},${index + 1}`,
-            value: val,
-        }));
+        // Plain JS Object parameter
+        if (isPlainObject(value)) {
+            const results = Object.keys(value).map(valueKey => ({
+                key: `${key},${valueKey}`,
+                value: value[valueKey],
+            }));
 
-        results.unshift({
-            key: `${key},0`,
-            value: value.length,
-        });
+            return map.concat(results);
+        }
 
-        return map.concat(results);
+        // Normal scalar value
+        map.push({ key, value });
+        return map;
     }, []);
 
     return list;
