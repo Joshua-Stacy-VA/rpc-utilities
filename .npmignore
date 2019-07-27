@@ -1,0 +1,6 @@
+examples/
+tests/
+coverage/
+.eslintrc
+.grenrc.json
+jest.config.js
