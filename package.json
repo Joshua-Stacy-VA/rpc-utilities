@@ -1,6 +1,6 @@
 {
   "name": "@vistadataproject/rpc-utilities",
-  "version": "0.1.0",
+  "version": "1.2.1",
   "description": "Utilities to handle manipulation and normalization of VISTA RPC data",
   "main": "src/index.js",
   "scripts": {
