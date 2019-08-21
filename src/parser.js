@@ -1,7 +1,8 @@
 'use strict';
 
-const { trimStart, trimEnd } = require('lodash/string');
-const { isString } = require('lodash/lang');
+const trimStart = require('lodash.trimstart');
+const trimEnd = require('lodash.trimend');
+const isString = require('lodash.isstring');
 const rpcUtils = require('./utils');
 
 /**

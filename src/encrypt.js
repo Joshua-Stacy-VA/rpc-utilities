@@ -1,7 +1,7 @@
 'use strict';
 
-const { isString } = require('lodash/lang');
-const { random } = require('lodash/number');
+const isString = require('lodash.isstring');
+const random = require('lodash.random');
 
 /**
  * @module Encryption

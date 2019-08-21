@@ -1,6 +1,8 @@
 'use strict';
 
-const { isPlainObject, isString, isNil } = require('lodash/lang');
+const isNil = require('lodash.isnil');
+const isPlainObject = require('lodash.isplainobject');
+const isString = require('lodash.isstring');
 const parser = require('./parser');
 const formatter = require('./formatter');
 const { encrypt, decrypt } = require('./encrypt');

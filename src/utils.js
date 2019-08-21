@@ -1,7 +1,8 @@
 'use strict';
 
-const { isString, isNumber } = require('lodash/lang');
-const { trimStart } = require('lodash/string');
+const isNumber = require('lodash.isnumber');
+const isString = require('lodash.isstring');
+const trimStart = require('lodash.trimstart');
 
 /**
  * @module Utils

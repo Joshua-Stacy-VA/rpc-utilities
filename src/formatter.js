@@ -1,6 +1,8 @@
 'use strict';
 
-const { isNil, isPlainObject, isString } = require('lodash/lang');
+const isNil = require('lodash.isnil');
+const isPlainObject = require('lodash.isplainobject');
+const isString = require('lodash.isstring');
 const { format } = require('util');
 const rpcUtils = require('./utils');
 
