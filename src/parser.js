@@ -66,7 +66,7 @@ const parseParameters = (paramRpcString) => {
             // pop two LPacks until it ends with a 'f'
             const listParams = [];
             let endoflist = false;
-            while (!endoflist) {
+            while (!endoflist && remainderString.length) {
                 const poppedKeyObject = rpcUtils.popLPack(remainderString);
                 remainderString = poppedKeyObject.remainder;
                 const poppedValueObject = rpcUtils.popLPack(remainderString);
