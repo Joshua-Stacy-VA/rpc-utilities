@@ -223,7 +223,8 @@ const parseRawRPC = (rpcString) => {
         //      or "YOUR DOG" parameter: LIST (a,1) (b,2) = "{XWB}007XWB;;;;000341YOUR DOG^00019001a0011001b0012000"
 
         // this type of RPC is not supported so we will reject it
-        rpcObject.name = '#REJECT#';
+        rpcObject.name = '#UNSUPPORTED_FORMAT#';
+        rpcObject.args = rpcString;
     } else if (rpcString.indexOf('TCPConnect') > -1) {
         // first check that the TCPConnect header fits the protocol
         if (rpcString.indexOf('[XWB]10304\nTCPConnect') === 0) {
