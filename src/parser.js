@@ -145,7 +145,8 @@ const inputParametersToArgs = (rpcObjectInputParameters) => {
                     key = key.substring(0, key.length - 2);
                     const wpLength = parseInt(value, 10);
                     for (let subitem = item + 1; subitem <= item + wpLength; subitem += 1) {
-                        wparray.push(parameterList[subitem].value);
+                        const subitemValue = parameterList[subitem] ? parameterList[subitem] : 'undefined';
+                        wparray.push(subitemValue);
                     }
                     listObject[key] = wparray;
                     // skip forward in the parameterList the WP Length
