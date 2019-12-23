@@ -244,7 +244,8 @@ const parseRawRPC = (rpcString) => {
             rpcObject.args = inputParametersToArgs(parametersArray);
         } else {
             // the header for the TCPConnect is not correct so we will inject a reject object
-            rpcObject.name = '#REJECT#';
+            rpcObject.name = '#UNSUPPORTED_FORMAT#';
+            rpcObject.args = rpcString;
         }
     } else if (rpcString.indexOf('[XWB]10304\u0005#BYE#\u0004') === 0) {
         rpcObject.name = '#BYE#';
