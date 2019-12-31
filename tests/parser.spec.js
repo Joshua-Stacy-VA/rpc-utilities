@@ -9,21 +9,31 @@ const {
 } = require('../src/parser');
 
 const TCP_CONNECT_RAW = '[XWB]10304\nTCPConnect50009127.0.0.1f0009TESTS61BFf\u0004';
+const TCP_CONNECT_NEW_VERSION_RAW = '[XWB]11304\nTCPConnect50009127.0.0.1f0004OVIDf\u0004';
 const TCP_CONNECT_INVALID_RAW = '11302\u00051.108\u000aTCPConnect50009127.0.0.1f0009TESTS61BFf\u0004';
 const BYE_RAW = '[XWB]10304\u0005#BYE#\u0004';
+const BYE_NEW_VERSION_RAW = '[XWB]11304\u0005#BYE#\u0004';
 const VALID_RAW = '[XWB]11302\u00051.108\u0010XUS SIGNON SETUP500011f0004TESTf\u0004';
 const VALID_REFERENCE_RAW = '[XWB]11302\u00051.108\u0010XUS SIGNON SETUP510011f0011HELLO WORLD\u0004';
 const VALID_LIST_RAW = '[XWB]11302\u00010\u0015ORWDAL32 SAVE ALLERGY52009"GMRAGNT"024CHOCOLATE^3;GMRD(120.82,t010"GMRATYPE"012DF^Drug,Foodt010"GMRANATR"009A^Allergyt010"GMRAORIG"00261t010"GMRAORDT"0123170121.0429t012"GMRASYMP",00011t012"GMRASYMP",101799^HYPOTENSION^^^f\u0004';
 const VALID_LIST_OBJ_RAW = '[XWB]11302\u00010\u0015ORWDAL32 SAVE ALLERGY52005a,b,c004TESTf';
 
 test('parseRawRPC', () => {
-    expect(parseRawRPC('{XWB}')).toEqual(expect.objectContaining({ name: '#REJECT#' }));
+    expect(parseRawRPC('{XWB}')).toEqual(expect.objectContaining({ name: '#UNSUPPORTED_FORMAT#' }));
     expect(parseRawRPC(TCP_CONNECT_RAW)).toEqual(expect.objectContaining({
         name: 'TCPConnect',
         args: ['127.0.0.1', 'TESTS61BF'],
     }));
-    expect(parseRawRPC(TCP_CONNECT_INVALID_RAW)).toEqual(expect.objectContaining({ name: '#REJECT#' }));
+    expect(parseRawRPC(TCP_CONNECT_NEW_VERSION_RAW)).toEqual(expect.objectContaining({
+        name: 'TCPConnect',
+        args: ['127.0.0.1', 'OVID'],
+    }));
+    expect(parseRawRPC(TCP_CONNECT_INVALID_RAW)).toEqual(expect.objectContaining({ name: '#UNSUPPORTED_FORMAT#' }));
     expect(parseRawRPC(BYE_RAW)).toEqual(expect.objectContaining({
+        name: '#BYE#',
+        args: [],
+    }));
+    expect(parseRawRPC(BYE_NEW_VERSION_RAW)).toEqual(expect.objectContaining({
         name: '#BYE#',
         args: [],
     }));

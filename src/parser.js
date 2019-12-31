@@ -211,70 +211,69 @@ const parseRawRPC = (rpcString) => {
         return null;
     }
 
-
-    if (rpcString.indexOf('{XWB}') === 0) {
-        // this is direct query
-        // {XWB}<MESSAGE> where <> is strPack with count_width 5
-        //   MESSAGE is
-        //     HDR = "007XWB;;;;"  or strPack(('XWB;;;;', 3)
-        //     then for no parameter of type LIST buildApi(rpcName, parameters, "0")
-        //       of buildApi(rpcName, parameters, "1") then the list of key value pairs each strPack with count_width 3 and terminated by 000
-        // e.g. rpc "MY DOG" parameter: LITERAL abcde = "{XWB}007XWB;;;;000170MY DOG^000090060abcde"
-        //      or "YOUR DOG" parameter: LIST (a,1) (b,2) = "{XWB}007XWB;;;;000341YOUR DOG^00019001a0011001b0012000"
-
-        // this type of RPC is not supported so we will reject it
+    // Check for invalid RPCs off the bat.
+    // * The '{XWB}' RPC: this is direct query (note: this type of RPC is not supported so we will reject it)
+    //    {XWB}<MESSAGE> where <> is strPack with count_width 5
+    //      MESSAGE is
+    //        HDR = "007XWB;;;;"  or strPack(('XWB;;;;', 3)
+    //        then for no parameter of type LIST buildApi(rpcName, parameters, "0")
+    //          of buildApi(rpcName, parameters, "1") then the list of key value pairs each strPack with count_width 3 and terminated by 000
+    //    e.g. rpc "MY DOG" parameter: LITERAL abcde = "{XWB}007XWB;;;;000170MY DOG^000090060abcde"
+    //         or "YOUR DOG" parameter: LIST (a,1) (b,2) = "{XWB}007XWB;;;;000341YOUR DOG^00019001a0011001b0012000"
+    if ((rpcString.indexOf('{XWB}') === 0) || (rpcString.indexOf('[XWB]') === -1)) {
         rpcObject.name = '#UNSUPPORTED_FORMAT#';
         rpcObject.args = rpcString;
-    } else if (rpcString.indexOf('TCPConnect') > -1) {
-        // first check that the TCPConnect header fits the protocol
-        if (rpcString.indexOf('[XWB]10304\nTCPConnect') === 0) {
-            rpcObject.name = 'TCPConnect';
 
-            // parse the originating IP and hostname
-            // form [XWB]10<COUNT_WIDTH>04\nTCPConnect + "5" + "0" + LPack(Address, COUNT_WIDTH) + "f"
-            //                                               + "0" + LPack("0", COUNT_WIDTH) + "f"
-            //                                               + "0" + LPack(Name, COUNT_WIDTH + 1) + "f\u0004"
-            // rpcString = rpcString.substring("[XWB]10304\nTCPConnect50".length);
-            // rpcObject.ipaddress = rpcUtils.popLPack(rpcString, COUNT_WIDTH).string;
-            // rpcString = rpcString.substring(2 + COUNT_WIDTH + 3);
-            // rpcObject.hostName = rpcUtils.popLPack(rpcString, COUNT_WIDTH).string;
+        return rpcObject;
+    }
 
-            const parametersArray = parseParameters(rpcString.substring('[XWB]10304\nTCPConnect'.length));
-            // rpcObject.inputParameters = parametersArray;
-            rpcObject.args = inputParametersToArgs(parametersArray);
-        } else {
-            // the header for the TCPConnect is not correct so we will inject a reject object
-            rpcObject.name = '#UNSUPPORTED_FORMAT#';
-            rpcObject.args = rpcString;
-        }
-    } else if (rpcString.indexOf('[XWB]10304\u0005#BYE#\u0004') === 0) {
+    // this is national query
+    // [XWB]11302<1.108><~RPCNAME~>~parameters~\u0004 where <> is an SPack
+    // by parts: PREFIX="[XWB]" then "11" then COUNT_WIDTH="3" then "02" then SPack RPC_VERSION="1.108" then SPack RPC_NAME
+    //    then the parameters where parameters = "5" then '0' for LITERAL, '1' for REFERENCE, '2' for LIST
+    //        then for literals and reference the string is 'LPacked' for using COUNT_WIDTH of 3 and end with an 'f'
+    //        for lists see list2string
+    // e.g. rpc "MY DOG" parameter: LITERAL abcde = "[XWB]11301251.1086MY DOG50005abcdef"
+    //      or "YOUR DOG" parameter: LIST (a,1) (b,2) = "[XWB]11301251.1088YOUR DOG52001a0011t001b0012f"
+    // strip [XWB] and "11302" rpcString.substring(10);
+    // get the version
+    if (rpcString.indexOf('TCPConnect') > -1) {
+        rpcObject.name = 'TCPConnect';
+
+        // parse the originating IP and hostname
+        // form [XWB]10<COUNT_WIDTH>04\nTCPConnect + "5" + "0" + LPack(Address, COUNT_WIDTH) + "f"
+        //                                               + "0" + LPack("0", COUNT_WIDTH) + "f"
+        //                                               + "0" + LPack(Name, COUNT_WIDTH + 1) + "f\u0004"
+        // rpcString = rpcString.substring("[XWB]10304\nTCPConnect50".length);
+        // rpcObject.ipaddress = rpcUtils.popLPack(rpcString, COUNT_WIDTH).string;
+        // rpcString = rpcString.substring(2 + COUNT_WIDTH + 3);
+        // rpcObject.hostName = rpcUtils.popLPack(rpcString, COUNT_WIDTH).string;
+
+        const parametersArray = parseParameters(rpcString.substring('[XWB]10304\nTCPConnect'.length));
+        // rpcObject.inputParameters = parametersArray;
+        rpcObject.args = inputParametersToArgs(parametersArray);
+
+        return rpcObject;
+    }
+
+    if (rpcString.indexOf('#BYE#') > -1) {
         rpcObject.name = '#BYE#';
         rpcObject.args = [];
-    } else if (rpcString.indexOf('[XWB]') === 0) {
-        // this is national query
-        // [XWB]11302<1.108><~RPCNAME~>~parameters~\u0004 where <> is an SPack
-        // by parts: PREFIX="[XWB]" then "11" then COUNT_WIDTH="3" then "02" then SPack RPC_VERSION="1.108" then SPack RPC_NAME
-        //    then the parameters where parameters = "5" then '0' for LITERAL, '1' for REFERENCE, '2' for LIST
-        //        then for literals and reference the string is 'LPacked' for using COUNT_WIDTH of 3 and end with an 'f'
-        //        for lists see list2string
-        // e.g. rpc "MY DOG" parameter: LITERAL abcde = "[XWB]11301251.1086MY DOG50005abcdef"
-        //      or "YOUR DOG" parameter: LIST (a,1) (b,2) = "[XWB]11301251.1088YOUR DOG52001a0011t001b0012f"
 
-        // strip [XWB] and "11302" rpcString.substring(10);
-        // get the version
-        let poppedObject = rpcUtils.popSPack(rpcString.substring(10));
-        const version = poppedObject.string;
-        // get the rpcName
-        poppedObject = rpcUtils.popSPack(poppedObject.remainder);
-        const rpcName = poppedObject.string;
-        const parametersArray = parseParameters(poppedObject.remainder);
-
-        rpcObject.name = rpcName;
-        rpcObject.version = version;
-        // rpcObject.inputParameters = parametersArray;
-
-        rpcObject.args = inputParametersToArgs(parametersArray);
+        return rpcObject;
     }
+
+    let poppedObject = rpcUtils.popSPack(rpcString.substring(10));
+    const version = poppedObject.string;
+    // get the rpcName
+    poppedObject = rpcUtils.popSPack(poppedObject.remainder);
+    const rpcName = poppedObject.string;
+    const parametersArray = parseParameters(poppedObject.remainder);
+
+    rpcObject.name = rpcName;
+    rpcObject.version = version;
+    rpcObject.args = inputParametersToArgs(parametersArray);
+
     return rpcObject;
 };
 

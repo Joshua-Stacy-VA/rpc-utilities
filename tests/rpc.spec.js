@@ -94,7 +94,8 @@ describe('Requests', () => {
     test('Negative conditions', () => {
         const rpc = new RPC();
         expect(rpc.request({ args: [] })).toBeInstanceOf(Error);
-        expect(rpc.request('')).toBeInstanceOf(Error);
+        rpc.request('');
+        expect(rpc.name).toBe('#UNSUPPORTED_FORMAT#');
         expect(rpc.request(null)).toMatchObject(new Error('Invalid request data'));
         expect(rpc.request.bind(rpc, null, { throwOnError: true })).toThrow();
     });
